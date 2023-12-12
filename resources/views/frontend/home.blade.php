@@ -4,7 +4,7 @@
     <!-- Hero Section -->
     <section class="bg-gray-900" id="hero">
         <div class="relative isolate pt-14">
-            <div class="absolute inset-x-0 overflow-hidden -top-40 -z-10 transform-gpu blur-3xl sm:-top-80">
+            <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
                 <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
                     style="
         clip-path: polygon(
@@ -29,8 +29,8 @@
                 </div>
             </div>
             <div class="py-24 sm:py-32 lg:pb-40">
-                <div class="px-6 mx-auto max-w-7xl lg:px-8">
-                    <div class="max-w-2xl mx-auto text-center">
+                <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div class="mx-auto max-w-2xl text-center">
                         <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
                             <span class="font-extrabold text-indigo-300">Jobbar</span> the
                             ultimate job seeker's toolkit
@@ -40,9 +40,9 @@
                             vast network of opportunities across industries.
                         </p>
 
-                        <form class="mt-10" action="" method="POST">
+                        <form class="mt-10" action="" method="GET">
                             <div class="relative w-full">
-                                <svg class="absolute hidden text-white left-4 top-5 sm:block md:left-8 md:top-7"
+                                <svg class="absolute left-4 top-5 hidden text-white sm:block md:left-8 md:top-7"
                                     width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -51,7 +51,8 @@
                                 </svg>
                                 <input
                                     class="h-[60px] w-full rounded-xl bg-white/5 pl-4 pr-28 text-white outline-none ring-1 ring-inset ring-white/10 sm:pl-12 md:h-[72px] md:pl-20"
-                                    type="search" placeholder="e.g. FullStack Laravel & VueJS Developer" />
+                                    type="search" name="search" value="{{ request('search', '') }}"
+                                    placeholder="e.g. FullStack Laravel & VueJS Developer" />
 
                                 <button
                                     class="absolute right-1.5 top-1.5 rounded-lg bg-indigo-500 px-5 py-3 text-base font-medium text-white transition hover:bg-indigo-500/60 md:right-3 md:top-3"
@@ -92,69 +93,73 @@
     </section>
     <!-- /Hero Section -->
     <main class="mb-20">
-        <div class="container max-w-6xl px-5 mx-auto my-10 md:px-2 xl:my-8">
+        <div class="container mx-auto my-10 max-w-6xl px-5 md:px-2 xl:my-8">
             <div class="grid grid-cols-12 lg:gap-12">
                 <div class="col-span-12" id="find-job">
                     <!-- Section Header -->
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold text-gray-300">Latest Jobs</h3>
-                        <p class="text-base text-white/60">1,056 Results Found</p>
+                        <p class="text-base text-white/60">{{ number_format($jobs->count()) }}
+                            {{ str('Result')->plural($jobs->count()) }} Found</p>
                     </div>
                     <!-- /Section Header -->
                     <!-- Job Listings -->
                     <div>
-                        <!-- Job Card -->
-                        <div
-                            class="flex flex-col gap-6 p-6 mt-8 text-white transition outline-none group rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 hover:bg-gray-600/30 hover:duration-500">
-                            <div class="flex items-center justify-between">
-                                <div class="flex flex-col items-start gap-6 md:flex-row md:items-center">
-                                    <img class="w-16 h-16 p-2 bg-gray-700 rounded-xl" alt="company logo" loading="lazy"
-                                        style="color: transparent"
-                                        src="https://companyurlfinder.com/marketing/assets/img/logos/laravel.com.png" />
-                                    <div>
-                                        <p class="text-sm font-medium text-indigo-400">
-                                            Company Name
-                                        </p>
-                                        <h6
-                                            class="mt-1 text-lg font-semibold text-white transition group-hover:opacity-90 group-hover:duration-300">
-                                            <a href="./job-details.html">The Job Title</a>
-                                        </h6>
-                                        <div class="flex items-center gap-2 mt-3">
-                                            <p class="px-2 py-1 text-xs rounded-md w-fit bg-gray-300/30 text-white/70">
-                                                Full Time
+                        @forelse ($jobs as $job)
+                            <!-- Job Card -->
+                            <div
+                                class="group mt-8 flex flex-col gap-6 rounded-xl bg-white/5 p-6 text-white outline-none ring-1 ring-inset ring-white/10 transition hover:bg-gray-600/30 hover:duration-500">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col items-start gap-6 md:flex-row md:items-center">
+                                        <img class="h-16 w-16 rounded-xl bg-gray-700 p-2" alt="{{ $job->company_name }}"
+                                            loading="lazy" style="color: transparent" src="{{ $job->company_logo }}" />
+                                        <div>
+                                            <p class="text-sm font-medium text-indigo-400">
+                                                {{ $job->company_name }}
                                             </p>
-                                            <p class="px-2 py-1 text-xs rounded-md w-fit bg-gray-300/30 text-white/70">
-                                                $5k - $7k
-                                            </p>
-                                            <p class="px-2 py-1 text-xs rounded-md w-fit bg-gray-300/30 text-white/70">
-                                                12 hours ago
-                                            </p>
+                                            <h6
+                                                class="mt-1 text-lg font-semibold text-white transition group-hover:opacity-90 group-hover:duration-300">
+                                                <a href="{{ route('frontend.job_details', $job->id) }}"> {{ $job->title }}
+                                                </a>
+                                            </h6>
+                                            <div class="mt-3 flex items-center gap-2">
+                                                <p class="w-fit rounded-md bg-gray-300/30 px-2 py-1 text-xs text-white/70">
+                                                    {{ $job->employment_type->getLabel() }}
+                                                </p>
+                                                <p class="w-fit rounded-md bg-gray-300/30 px-2 py-1 text-xs text-white/70">
+                                                    {{ $job->salary }}
+                                                </p>
+                                                <p class="w-fit rounded-md bg-gray-300/30 px-2 py-1 text-xs text-white/70">
+                                                    {{ $job->created_at->diffForHumans() }}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
+                                    <a class="hidden items-center gap-1.5 rounded-lg bg-gray-300/30 px-4 py-2.5 text-indigo-300 transition group-hover:bg-indigo-500 group-hover:text-white group-hover:duration-500 md:flex"
+                                        href="{{ route('frontend.job_details', $job->id) }}">
+                                        View Job
+                                        <span>
+                                            <svg width="18" height="18" viewBox="0 0 14 14" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <g opacity="0.6">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M6.86409 2.59846C7.12037 2.34218 7.53588 2.34218 7.79216 2.59846L11.7297 6.53596C11.9859 6.79224 11.9859 7.20776 11.7297 7.46404L7.79216 11.4015C7.53588 11.6578 7.12037 11.6578 6.86409 11.4015C6.6078 11.1453 6.6078 10.7297 6.86409 10.4735L9.6813 7.65625H2.73438C2.37194 7.65625 2.07812 7.36244 2.07812 7C2.07812 6.63756 2.37194 6.34375 2.73438 6.34375H9.6813L6.86409 3.52654C6.6078 3.27026 6.6078 2.85474 6.86409 2.59846Z"
+                                                        fill="currentColor"></path>
+                                                </g>
+                                            </svg>
+                                        </span>
+                                    </a>
                                 </div>
-                                <a class="hidden items-center gap-1.5 rounded-lg bg-gray-300/30 px-4 py-2.5 text-indigo-300 transition group-hover:bg-indigo-500 group-hover:text-white group-hover:duration-500 md:flex"
-                                    href="./job-details.html">
-                                    View Job
-                                    <span>
-                                        <svg width="18" height="18" viewBox="0 0 14 14" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <g opacity="0.6">
-                                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                                    d="M6.86409 2.59846C7.12037 2.34218 7.53588 2.34218 7.79216 2.59846L11.7297 6.53596C11.9859 6.79224 11.9859 7.20776 11.7297 7.46404L7.79216 11.4015C7.53588 11.6578 7.12037 11.6578 6.86409 11.4015C6.6078 11.1453 6.6078 10.7297 6.86409 10.4735L9.6813 7.65625H2.73438C2.37194 7.65625 2.07812 7.36244 2.07812 7C2.07812 6.63756 2.37194 6.34375 2.73438 6.34375H9.6813L6.86409 3.52654C6.6078 3.27026 6.6078 2.85474 6.86409 2.59846Z"
-                                                    fill="currentColor"></path>
-                                            </g>
-                                        </svg>
-                                    </span>
-                                </a>
+                                <p class="mt-5 text-base text-white/60">
+                                    {{ str($job->description)->limit(200) }}
+                                </p>
                             </div>
-                            <p class="mt-5 text-base text-white/60">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                                do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                                laboris nisi ut aliquip ex ea commodo consequat.
-                            </p>
-                        </div>
-                        <!-- /Job Card -->
+                            <!-- /Job Card -->
+                        @empty
+                            <h4 class="my-4 text-center text-xl font-semibold text-white/80">
+                                No jobs posted yet. Come back later! 👋
+                            </h4>
+                        @endforelse
                     </div>
                     <!-- /Job Listings -->
                 </div>

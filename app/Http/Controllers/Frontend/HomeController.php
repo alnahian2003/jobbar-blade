@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Job;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -12,6 +13,9 @@ class HomeController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return view('frontend.home');
+        $jobs = Job::when($request->search, function ($query) use ($request) {
+            return $query->where('title', 'LIKE', "%{$request->search}%");
+        })->latest()->get();
+        return view('frontend.home', compact('jobs'));
     }
 }
